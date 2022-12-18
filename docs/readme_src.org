@@ -23,7 +23,7 @@ Where is buckfs suitable:
 
 Where is buckfs not suitable:
 - Where you have lots of predominantly very small files you wish to track. This is because each individual file includes at least ~10 bytes of metadata which is stored in and synchronised with the main files. Where average file sizes are very small, this can start to become a major component of storage.
-
+* TODO Installation
 * Schema
 ** File UUID
 The core distinguishing feature of buckfs is to uniquely identify files not by their file path, rather using a unique universal identifier (UUID) which is inserted into the file name using the following syntax:
@@ -151,7 +151,7 @@ Where:
 - these are first looked up in the cache by their UUID.
 - We
 
-* Migrating
+* TODO Migrating
 
 * Project Features
 - Single client CLI Application to sync files with UUID with a server
@@ -167,4 +167,4 @@ Where:
   + Track and untrack files (i.e. add uuid)
 - daemon to regularly rebuild and synchronise files
 
-* Project timeline
+* TODO Project timeline
