@@ -39,9 +39,20 @@ class BFS:
         """Initialise buckfs."""
         # we need to parse the config section dir to find all of the remotes
         # if they are defined.
-        self._config_file_path = kwargs.get("config_path", None)
-        if self._config_file_path is None:
-            self._config_file_path = self._find_config_file()
+        if len(args) > 0:
+            if not isinstance(args[0], str):
+                raise ValueError("First argument \"config_path\" must be a string.")
+            str_path = args[0]
+        else:
+            str_path = kwargs.get("config_path", None)
+        if str_path is None:
+            # we don't have a valid path string from args
+            self._config_file_path = self._find_config_file_in_default_loc()
+        else:
+            # we have a valid path string from args
+            self._config_file_path = Path(str_path).expanduser()
+            if not self._config_file_path.exists():
+                raise ValueError(f"Path doen't exit: {str(str_path)}")
         # parse the config file
         self._parse_config_file()
         # build the regular expression used to match file names
@@ -69,9 +80,11 @@ class BFS:
             uuid_alph = this_bucket_dict.get("uuid_alphabet", None)
             if uuid_alph is None:
                 uuid_alph = shortuuid.get_alphabet()
-            if not self._validate_blocklist_chars(uuid_alph):
+            found_blocklist_chars = self._find_blocklist_chars(uuid_alph)
+            if len(found_blocklist_chars) > 0:
                 raise ConfigParseError("UUID alphabet contained "
-                                       "forbidden characters!")
+                                       "forbidden characters!\n"
+                                       f"{found_blocklist_chars}")
             self._uuid_alphabet = uuid_alph
             # extract the uuid length
             uuid_len = this_bucket_dict.get("uuid_len", None)
@@ -79,7 +92,7 @@ class BFS:
                 self._uuid_len = uuid_len
 
     # TODO currently this does nothing
-    def _find_config_file(self) -> Path:
+    def _find_config_file_in_default_loc(self) -> Path:
         """Return config file path."""
         for path in self._config_file_default_locations:
             f = Path(path)
@@ -122,18 +135,17 @@ class BFS:
         return ''.join('\\'+char if char in uuid_chars_2_escape else char
                        for char in chars)
 
-    def _validate_blocklist_chars(self, alphabet: str):
+    def _find_blocklist_chars(self, alphabet: str):
         """Check alphabet contains only valid characters."""
-        uuid_blocklist_chars = ["[",  "]",  ")", "(",
+        uuid_blocklist_chars = set(
+                               ["[",  "]",  ")", "(",
                                 "/", "\\", "\"", "*",
                                 "%",  "+",  "=", "^",
                                 "£",  "$",  "!", "?",
                                 "`",  "@",  "~", "#",
-                                "'",  " "]
-        if any(char in alphabet for char in uuid_blocklist_chars):
-            return True
-        else:
-            return False
+                                "'",  " "])
+        alphabet_set = set(*[alphabet])
+        return uuid_blocklist_chars.intersection(alphabet_set)
 
     def get_uuid_re(self) -> Pattern:
         """Return regular expression for finding uuids in file names/paths."""
