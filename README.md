@@ -1,31 +1,33 @@
 
 # Table of Contents
 
-1.  [Overview](#orgcdadf33)
-2.  [Schema](#org3cbd0b0)
-    1.  [File UUID](#org2194dad)
-    2.  [Tracked Directories](#orgbd2850a)
-    3.  [Buckets](#orgd80ec40)
-    4.  [Remotes](#orgc4e10e6)
-    5.  [Tags](#org917a14e)
-        1.  [Reserved tags](#org3d19672)
-        2.  [Acceptable characters](#orgcc28322)
-    6.  [File Deletion](#org30080a4)
-    7.  [File renaming](#org5f49f0a)
-    8.  [Manual resync](#org4bd6e58)
-3.  [Philosophy](#org0d17ae0)
-4.  [Caching](#orgf5aa5e7)
-    1.  [Cache Schema](#orgdef374c)
-    2.  [Syncing](#orgdd50ce8)
-5.  [Migrating](#org0330578)
-6.  [Project Features](#orgb196b37)
-7.  [Project timeline](#org09fdad9)
+1.  [Overview](#org71222d4)
+2.  [Schema](#org587c9ce)
+    1.  [File UUID](#org13a7165)
+    2.  [Tracked Directories](#org52de727)
+    3.  [Buckets](#orgd8179ce)
+    4.  [Remotes](#orgcee25c9)
+    5.  [Tags](#org295555f)
+        1.  [Reserved tags](#orge51c6b6)
+        2.  [Acceptable characters](#orgd7f44fc)
+    6.  [File Deletion](#org41bd44c)
+    7.  [File renaming](#orgdd303bf)
+    8.  [Manual resync](#orgcf2ee3c)
+3.  [Philosophy](#org5be18c9)
+4.  [Caching](#orga9d207e)
+    1.  [Cache Schema](#org81fd9f0)
+    2.  [Syncing](#orgf65783a)
+5.  [Migrating](#org506116c)
+6.  [Project Features](#org5e5019a)
+7.  [Project timeline](#orgdd56bbf)
 
 
 
-<a id="orgcdadf33"></a>
+<a id="org71222d4"></a>
 
 # Overview
+
+⚠ This project is as yet not fully implemented.
 
 Buckfs aims to implement a file management system to work with files in a hierarchy agnostic fashion. Core to the buckfs philosophy is the definition of a simple and completely flexible schema which can be easily tailored to the user&rsquo;s needs.
 
@@ -50,12 +52,12 @@ Where is buckfs not suitable:
 -   Where you have lots of predominantly very small files you wish to track. This is because each individual file includes at least ~10 bytes of metadata which is stored in and synchronised with the main files. Where average file sizes are very small, this can start to become a major component of storage.
 
 
-<a id="org3cbd0b0"></a>
+<a id="org587c9ce"></a>
 
 # Schema
 
 
-<a id="org2194dad"></a>
+<a id="org13a7165"></a>
 
 ## File UUID
 
@@ -69,7 +71,7 @@ Some example filenames might be:
 -   `haiku about trees[S4uY07Ed9].txt`
 
 
-<a id="orgbd2850a"></a>
+<a id="org52de727"></a>
 
 ## Tracked Directories
 
@@ -83,7 +85,7 @@ Some example filenames might be:
 -   You can `pull` any tracked repositories by UUID which will create a local version of that directory and it&rsquo;s children in the target directory.
 
 
-<a id="orgd80ec40"></a>
+<a id="orgd8179ce"></a>
 
 ## Buckets
 
@@ -91,14 +93,14 @@ Some example filenames might be:
 -   Each local bucket must be declared in the `.buckfsrc` file.
 
 
-<a id="orgc4e10e6"></a>
+<a id="orgcee25c9"></a>
 
 ## Remotes
 
 -   A remote is simply another bucket that is defined as a synchronization target (remote copy) of the current bucket being worked on.
 
 
-<a id="org917a14e"></a>
+<a id="org295555f"></a>
 
 ## Tags
 
@@ -133,7 +135,7 @@ Some example filenames might be:
     -   Can easily resolve separate deletions
 
 
-<a id="org3d19672"></a>
+<a id="orge51c6b6"></a>
 
 ### Reserved tags
 
@@ -145,14 +147,14 @@ Tags are also used for internal buckfs housekeeping and are as such reserved. Al
     -   This informs whether the md5 must be requested.
 
 
-<a id="orgcc28322"></a>
+<a id="orgd7f44fc"></a>
 
 ### Acceptable characters
 
 The main constraint to tags is that they must of course work within a filename, since the name of a tag is defined by the name of a tags file. Further more, though not an explicit requirement
 
 
-<a id="org30080a4"></a>
+<a id="org41bd44c"></a>
 
 ## File Deletion
 
@@ -160,14 +162,14 @@ The main constraint to tags is that they must of course work within a filename, 
 -   Full file deletion in buckfs is a specific operation which must be invoked by the user explicitly using the `buckfs delete <file>` command.
 
 
-<a id="org5f49f0a"></a>
+<a id="orgdd303bf"></a>
 
 ## File renaming
 
 The default behaviour, as long as the UUID remains valid, is that renamed files will not change on the remote or in other directories where it is present. Renaming on the remote must be specifically invoked using the `buckfs rename <file> <new name>` command. Internally this simply tags the file as renamed with the
 
 
-<a id="org4bd6e58"></a>
+<a id="orgcf2ee3c"></a>
 
 ## Manual resync
 
@@ -176,7 +178,7 @@ Buckfs implicitly assumes that all changes made to internal files such as direct
 If the cache ends up corrupted, the entire database may be rebuilt using the `-a` flag. This will delete the cache and then walk the local bucket file hierarchy rebuilding the local cache including tag files.
 
 
-<a id="org0d17ae0"></a>
+<a id="org5be18c9"></a>
 
 # Philosophy
 
@@ -194,7 +196,7 @@ This solves many of the core problems I have with file management systems such a
 -   Filing ambiguity - This file belongs in both `/haikus` and `/trees`! How will i remember where I put it? **A:** Put it in both using tags.
 
 
-<a id="orgf5aa5e7"></a>
+<a id="orga9d207e"></a>
 
 # Caching
 
@@ -203,7 +205,7 @@ In order to minimise sync times buckfs creates a local cache of each bucket usin
 The cache allows each file selected for synchronisation
 
 
-<a id="orgdef374c"></a>
+<a id="org81fd9f0"></a>
 
 ## Cache Schema
 
@@ -255,7 +257,7 @@ Where:
 -   **tsynced:** Time that the object is successfully synchronized with the remote.
 
 
-<a id="orgdd50ce8"></a>
+<a id="orgf65783a"></a>
 
 ## Syncing
 
@@ -275,12 +277,12 @@ Where:
 -   We
 
 
-<a id="org0330578"></a>
+<a id="org506116c"></a>
 
 # Migrating
 
 
-<a id="orgb196b37"></a>
+<a id="org5e5019a"></a>
 
 # Project Features
 
@@ -298,7 +300,7 @@ Where:
 -   daemon to regularly rebuild and synchronise files
 
 
-<a id="org09fdad9"></a>
+<a id="orgdd56bbf"></a>
 
 # Project timeline
 

@@ -3,13 +3,15 @@
 * ⚙ Config :noexport:
 - [[elisp: org-md-export-to-markdown][export]]
 * Overview
+⚠ This project is as yet not fully implemented.
+
 Buckfs aims to implement a file management system to work with files in a hierarchy agnostic fashion. Core to the buckfs philosophy is the definition of a simple and completely flexible schema which can be easily tailored to the user's needs.
 
 Features include:
 - Simple, transparent, OS agnostic schema
 - Simple CLI for operations such as:
-  + =buckfs sync= :: to sync the present working directory and all it's children
-  + =buckfs sync <filename>= :: to sync just one file
+  + ~buckfs sync~ :: to sync the present working directory and all it's children
+  + ~buckfs sync <filename>~ :: to sync just one file
 - Object based file synchronisation
 - Git like ignore file matching
 - File hierarchy agnostic synchronisation
