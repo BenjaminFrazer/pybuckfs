@@ -1,0 +1,39 @@
+# test yaml config
+buckets:
+  test:
+    # where to look for the buckfs tag files
+    name: "test"
+    # sync actions to explicity confirm before taking
+    confirm:
+      # if a sync will delete a file on the remote
+      remote_deletion: True
+      # if an sync will delete a local copy of the file
+      local_deletion: True
+      # if a sync will rename a file on the local
+      local_rename: True
+      # if a local and remote version are in conflict
+      conflict: True
+    tag_files_dir: ".buckfstags"
+    deletions_file_uuid: ""
+    cache:
+    sync_settings:
+      # validate if the file is a directory or not
+      validate_type: False
+      # validate file changes by md5
+      validate_md5: True
+      # store file information in a local cache to make synchronisation quicker
+      use_caching: True
+    dirs: # where does this bucket occur on disk
+      - "~/data/test buckfs/repository to sync/"
+    remote:
+      # what algorithm to use for a given bucket
+      hash_algorithm: "md5"
+    ignore_rules:
+      git_folder=True
+      git_repo=True
+      hidden_files=True
+    ignore_re:
+    # lettters allowed in uuid
+    uuid_alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz_-"
+    # how long are the uuids we use
+    uuid_len: 8
