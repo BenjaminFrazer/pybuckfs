@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "buckfs"
+dynamic = ["dependencies"]
+version = "0.0.1"
+authors = [
+  { name="Ben F", email="benjamin.frazer.1997@gmail.com" },
+]
+description = "An api for working with the the buckfs schema."
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["one", "two"]
+license = {text = "GPL"}
+classifiers = [
+    "Framework :: Django",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
