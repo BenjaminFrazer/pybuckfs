@@ -20,7 +20,7 @@ class Bucket:
         assert type(roots) is list
         assert type(remotes) is dict
         assert type(name) is str
-        self._paths = roots
+        self._roots = roots
         self._remotes = remotes
         self._name = name
         pass
@@ -33,6 +33,11 @@ class Bucket:
         """Return unique bucket name."""
         return self._name
 
+    @property
+    def name(self) -> str:
+        """Return name of bucket."""
+        return self.get_name()
+
     def get_remotes(self) -> Dict[str, Remote]:
         """Return the remotes that are asociated with this bucket."""
         return self._Remotes
@@ -40,3 +45,8 @@ class Bucket:
     def get_roots(self) -> List[str]:
         """Return the root paths to all bucket files on the local system."""
         return self._roots
+
+    @property
+    def roots(self) -> List[str]:
+        """Return the root paths to all bucket files on the local system."""
+        return self.get_roots()
