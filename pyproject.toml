@@ -13,7 +13,7 @@ description = "An api for working with the the buckfs schema."
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["one", "two"]
-license = {text = "GPL"}
+license = {text = "GPL-3.0 Licence"}
 classifiers = [
     "Framework :: Django",
     "Programming Language :: Python :: 3",
