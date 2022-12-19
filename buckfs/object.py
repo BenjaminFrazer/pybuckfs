@@ -30,7 +30,3 @@ class Object(ABC):
         """Return the bucket that this object belongs to."""
         raise NotImplementedError
 
-    # @abstractmethod
-    # def get_dir(self) ->
-    # """Return the directory that this object belongs to."""
-    # Don't know about how to do this one yet
