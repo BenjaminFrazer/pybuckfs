@@ -11,6 +11,7 @@ import re
 from typing import Pattern
 from warnings import warn
 import shortuuid
+from .localObject import LocalObject
 
 
 class ConfigParseError(Exception):
@@ -26,6 +27,7 @@ class BFS:
     _config_dir: str  # where are the configuration files
     _uuid_re: Pattern  # regular expression for matching uuids
     _re_inited: bool = False  # have we initialised the regex
+    _re_multiline_inited: bool = False  # see above
     _config_file_path: Path  # file path to the current configuration file
     # places to look for the buckfs yaml file
     _config_file_default_locations: List[str] =\
@@ -91,11 +93,10 @@ class BFS:
             if uuid_len is not None:
                 self._uuid_len = uuid_len
 
-    # TODO currently this does nothing
     def _find_config_file_in_default_loc(self) -> Path:
-        """Return config file path."""
+        """Return config file path from one of the default locations."""
         for path in self._config_file_default_locations:
-            f = Path(path)
+            f = Path(path).expanduser()
             if f.exists():
                 return f
         raise FileNotFoundError("No config file found in default locations.")
@@ -113,17 +114,47 @@ class BFS:
             shortuuid.set_alphabet(self._uuid_alphabet)
         return shortuuid.uuid()[:length]
 
+    def get_uuid_from_path(self, path: str) -> str:
+        """Return the uuid of a file."""
+        if not isinstance(path, str):
+            raise ValueError("Argument not of type str")
+        ret_ls = self.get_uuid_re().findall(path)
+        if len(ret_ls) != 1:
+            raise ValueError(f"Failed to parse uuid from path: {path}")
+        return ret_ls[0]
+
     def _build_re(self):
-        """Build regular expression used to match uuid in file name string."""
-        re_path = r"(?:[ a-zA-Z0-9_\-\/.]*\/)?"
+        """
+        Build regular expression used to match uuid in file name string.
+
+        RE To be used with a single file path at a time, Re returns a single
+        string which is the UUID.
+        """
+        re_path = r"(?:[ ~a-zA-Z0-9_\-\/.]*\/)?"
         re_name = r"(?:[ a-zA-Z0-9_\-\[\]]*)"
         re_extention = r"(?:[.][a-zA-z]{1,4})?"
         escaped_alphabet = self._escape_regex_chars(self._uuid_alphabet)
         re_uuid = r"\[(" f"[{escaped_alphabet}]" r"{3,12})\]"
         uuid_re = f'^{re_path}{re_name}{re_uuid}{re_extention}$'
         self._re_inited = True
-        # self._uuid_re_comp = re.compile(uuid_re, re.MULTILINE)
         self._uuid_re = re.compile(uuid_re)
+
+    def _build_multiline_re(self):
+        """Regular expression for matching newline seperated str."""
+        re_path = r"(?:[ ~a-zA-Z0-9_\-\/.]*\/)?"
+        re_name = r"(?:[ a-zA-Z0-9_\-\[\]]*)"
+        re_extention = r"(?:[.][a-zA-z]{1,4})?"
+        escaped_alphabet = self._escape_regex_chars(self._uuid_alphabet)
+        re_uuid = r"\[(" f"[{escaped_alphabet}]" r"{3,12})\]"
+        uuid_re = f'^({re_path}{re_name}{re_uuid}{re_extention})$'
+        self._re_multiline_inited = True
+        self._uuid_multiline_re = re.compile(uuid_re, flags=re.MULTILINE)
+
+    def get_multiline_uuid_re(self) -> Pattern:
+        """Return multiline regular expression."""
+        if not self._re_multiline_inited:
+            self._build_multiline_re()
+        return self._uuid_multiline_re
 
     def _escape_regex_chars(self, chars: str):
         """Properly escape these chars if detected."""
@@ -238,6 +269,10 @@ class BFS:
         sufixs = "".join("."+s for s in fp.name.split(".")[1:])
         dest = fp.parent + stem + f"[{uuid}]" + sufixs
         os.rename(fp, dest)
+
+    def get_local_instances(self, UUID: str) -> List[LocalObject]:
+        """Return a list of all local instances of an object."""
+        pass
 
 
 if __name__ == "__main__":
