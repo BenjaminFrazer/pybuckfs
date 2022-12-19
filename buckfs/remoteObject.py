@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from abc import ABC, abstractmethod, abstractproperty
-from remote import Remote
-from object import Object
+from .remote import Remote
+from .object import Object
 
 
 class RemoteObject():
