@@ -4,6 +4,7 @@ import hashlib
 from abc import ABC  # , abstractmethod, abstractproperty
 # from typing import Dict
 from pathlib import Path
+from .bfs import BFS
 
 import os
 
@@ -13,12 +14,21 @@ class LocalObject(ABC):
 
     _filepath: Path  #
     _uuid: str
+    _bfs: BFS
     # _remoteObjects: Dict[str, remoteObject]
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, uuid: str = None):
         """Initialise Tracked object."""
-        _filepath: os.path.expanduser(path)
+        if not Path(path).expanduser().exists():
+            raise ValueError(f"File not found: {path}")
+        self._filepath: os.path.expanduser(path)
+        self._bfs = BFS()
+        if uuid is None:
+            self._uuid = self._bfs.get_uuid_from_path(path)
+        else:
+            self._uuid = uuid
 
+    @property
     def uuid(self) -> str:
         """Return the uuid of the object."""
         return self._uuid
