@@ -23,7 +23,6 @@ class Bucket:
         self._roots = roots
         self._remotes = remotes
         self._name = name
-        pass
 
     def get_files(self) -> pd.DataFrame:
         """Return a dataframe of files in the bucket."""
